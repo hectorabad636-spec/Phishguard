@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PhishGuard — Phishing Awareness Platform
 
-## Getting Started
+> Plataforma de simulación de phishing para entrenar a empleados en ciberseguridad. Permite a administradores lanzar campañas de phishing simulado, medir resultados en tiempo real y formar a los usuarios que caen en la trampa.
 
-First, run the development server:
+![Estado](https://img.shields.io/badge/estado-en%20desarrollo-yellow)
+![Versión](https://img.shields.io/badge/versión-0.1.0-blue)
+![Licencia](https://img.shields.io/badge/licencia-MIT-green)
+![Stack](https://img.shields.io/badge/stack-Next.js%20%7C%20FastAPI%20%7C%20PostgreSQL-purple)
+
+---
+
+## Aviso legal
+
+Este proyecto está diseñado **únicamente para entornos autorizados y educativos**. Nunca se almacenan credenciales reales. El uso fuera de entornos autorizados puede ser ilegal.
+
+---
+
+## Descripción
+
+PhishGuard permite a equipos de seguridad lanzar campañas de phishing simulado de forma controlada. Los empleados reciben emails falsos realistas y, si hacen clic, son redirigidos a una página educativa que explica el error y ofrece formación inmediata.
+
+**Diferencias frente a GoPhish o KnowBe4:**
+- Interfaz moderna tipo SaaS con dashboard en tiempo real
+- Feed de actividad live via WebSockets
+- Módulo de formación inmediata post-clic
+- Gamificación con rankings y badges
+- Generación de emails con IA
+
+---
+
+## Stack tecnológico
+
+| Capa | Tecnología |
+|------|-----------|
+| Frontend | Next.js 14, Tailwind CSS, shadcn/ui, Recharts |
+| Backend | FastAPI, PostgreSQL, Redis, Celery |
+| Infra | Docker Compose, Nginx, GitHub Actions |
+
+---
+
+## Instalación
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/hectorabad636-spec/Phishguard.git
+cd phishguard
+docker-compose up -d
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Frontend:
+```bash
+cd frontend && npm install && npm run dev
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Backend:
+```bash
+cd backend && pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Web: http://localhost:3000
+- API docs: http://localhost:8000/docs
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Roadmap
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Fase 1 — MVP**
+- [x] Dashboard con métricas
+- [ ] Autenticación JWT
+- [ ] CRUD de campañas
+- [ ] Envío de emails simulados
+- [ ] Tracking de clics
+- [ ] Landing page educativa
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Fase 2 — Profesional**
+- [ ] Gráficos con Recharts
+- [ ] WebSockets tiempo real
+- [ ] Templates de phishing
+- [ ] Roles RBAC
+- [ ] Reportes PDF
+- [ ] Celery para envío masivo
 
-## Deploy on Vercel
+**Fase 3 — Empresa**
+- [ ] Deploy VPS + Docker + Nginx
+- [ ] CI/CD GitHub Actions
+- [ ] Gamificación
+- [ ] Emails con IA
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+> Desarrollado con fines educativos. Úsalo responsablemente.

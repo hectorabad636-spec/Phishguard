@@ -5,6 +5,7 @@ from app.models import user, campaign, email_event
 from app.routes import auth, campaigns
 import logging
 logging.basicConfig(level=logging.DEBUG)
+from app.routes import auth, campaigns, tracking
 
 Base.metadata.create_all(bind=engine)
 
@@ -24,6 +25,9 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(campaigns.router)
+app.include_router(auth.router)
+app.include_router(campaigns.router)
+app.include_router(tracking.router)
 
 @app.get("/")
 def root():

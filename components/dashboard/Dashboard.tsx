@@ -2,6 +2,7 @@
 
 import Sidebar from '@/components/layout/Sidebar'
 import CampaignChart from '@/components/dashboard/CampaignChart'
+import { useEffect, useState } from 'react'
 
 const stats = [
   { label: 'Campañas activas', value: '3', change: '↑ 1 esta semana', color: 'var(--accent)', borderColor: 'var(--accent)' },
@@ -24,12 +25,32 @@ const campaigns = [
 ]
 
 export default function Dashboard() {
+  const [liveEvents, setLiveEvents] = useState(activity)
+
+  useEffect(() => {
+    const ws = new WebSocket('ws://localhost:8000/ws')
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data)
+      setLiveEvents(prev => [{
+        user: data.email,
+        action: 'cayó',
+        campaign: `Campaña ${data.campaign_id}`,
+        browser: 'Chrome',
+        location: data.ip,
+        time: 'ahora',
+        type: 'click'
+      }, ...prev.slice(0, 3)])
+    }
+
+    return () => ws.close()
+  }, [])
+
   return (
     <div style={{ display: 'flex' }}>
       <Sidebar />
       <main style={{ marginLeft: '220px', flex: 1, minHeight: '100vh' }}>
 
-        {/* Topbar */}
         <header style={{
           padding: '0 28px', height: '60px',
           borderBottom: '1px solid var(--border)',
@@ -52,7 +73,6 @@ export default function Dashboard() {
 
         <div style={{ padding: '28px' }}>
 
-          {/* Live bar */}
           <div style={{
             display: 'flex', alignItems: 'center', gap: '10px',
             padding: '10px 16px', background: 'var(--accent-dim)',
@@ -60,10 +80,9 @@ export default function Dashboard() {
             marginBottom: '24px', fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--accent)'
           }}>
             <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: 'var(--accent)', animation: 'pulse 2s infinite' }}/>
-           CAMPAÑA ACTIVA — &quot;Microsoft 365 Phishing&quot; — 142 emails enviados · 23 clicks detectados en tiempo real
+            CAMPAÑA ACTIVA — &quot;Microsoft 365 Phishing&quot; — 142 emails enviados · 23 clicks detectados en tiempo real
           </div>
 
-          {/* Stats */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px' }}>
             {stats.map((s) => (
               <div key={s.label} style={{
@@ -78,18 +97,16 @@ export default function Dashboard() {
             ))}
           </div>
 
-          {/* Activity + Table */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '16px', marginBottom: '24px' }}>
 
-            {/* Activity feed */}
             <div style={{ background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: '12px' }}>
               <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div style={{ fontSize: '13px', fontWeight: 600 }}>Actividad en tiempo real</div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--accent)' }}>● LIVE</div>
               </div>
               <div style={{ padding: '8px 16px' }}>
-                {activity.map((a, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 0', borderBottom: i < activity.length - 1 ? '1px solid var(--border)' : 'none' }}>
+                {liveEvents.map((a, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 0', borderBottom: i < liveEvents.length - 1 ? '1px solid var(--border)' : 'none' }}>
                     <div style={{
                       width: '28px', height: '28px', borderRadius: '50%', flexShrink: 0,
                       display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px',
@@ -107,7 +124,6 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Quick stats */}
             <div style={{ background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: '12px' }}>
               <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
                 <div style={{ fontSize: '13px', fontWeight: 600 }}>Resumen del mes</div>
@@ -127,7 +143,9 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
- <CampaignChart />
+
+          <CampaignChart />
+
           {/* Campaigns table */}
           <div style={{ background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: '12px', overflow: 'hidden' }}>
             <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

@@ -3,11 +3,13 @@ from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.models.email_event import EmailEvent
+import asyncio
+import json
 
 router = APIRouter(prefix="/track", tags=["tracking"])
 
 @router.get("/click/{campaign_id}/{user_email}")
-def track_click(
+async def track_click(
     campaign_id: int,
     user_email: str,
     request: Request,
@@ -22,6 +24,14 @@ def track_click(
     )
     db.add(event)
     db.commit()
+
+    from app.main import manager
+    asyncio.create_task(manager.broadcast(json.dumps({
+        "type": "click",
+        "email": user_email,
+        "campaign_id": campaign_id,
+        "ip": request.client.host
+    })))
 
     return RedirectResponse(url=f"/landing?email={user_email}")
 

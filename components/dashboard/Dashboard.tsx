@@ -1,6 +1,7 @@
 'use client'
 
 import Sidebar from '@/components/layout/Sidebar'
+import CampaignChart from '@/components/dashboard/CampaignChart'
 
 const stats = [
   { label: 'Campañas activas', value: '3', change: '↑ 1 esta semana', color: 'var(--accent)', borderColor: 'var(--accent)' },
@@ -126,7 +127,7 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-
+ <CampaignChart />
           {/* Campaigns table */}
           <div style={{ background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: '12px', overflow: 'hidden' }}>
             <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

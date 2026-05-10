@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.database import engine, Base
 from app.models import user, campaign, email_event
-from app.routes import auth
+from app.routes import auth, campaigns
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
@@ -23,6 +23,7 @@ app.add_middleware(
 )
 
 app.include_router(auth.router)
+app.include_router(campaigns.router)
 
 @app.get("/")
 def root():

@@ -6,6 +6,7 @@ from app.routes import auth, campaigns, tracking
 from app.core.websocket import manager
 import logging
 logging.basicConfig(level=logging.DEBUG)
+from app.routes import auth, campaigns, tracking, reports
 
 Base.metadata.create_all(bind=engine)
 
@@ -26,6 +27,7 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(campaigns.router)
 app.include_router(tracking.router)
+app.include_router(reports.router)
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):

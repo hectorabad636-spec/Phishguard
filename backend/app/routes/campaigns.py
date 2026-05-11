@@ -38,3 +38,46 @@ def delete_campaign(id: int, db: Session = Depends(get_db)):
     db.delete(campaign)
     db.commit()
     return {"message": "Campaña eliminada"}
+
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from app.core.database import get_db
+from app.core.security import get_current_user, require_admin
+from app.models.campaign import Campaign
+from app.schemas.campaign import CampaignCreate, CampaignResponse
+from typing import List
+
+router = APIRouter(prefix="/campaigns", tags=["campaigns"])
+
+@router.get("/", response_model=List[CampaignResponse])
+def get_campaigns(db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+    return db.query(Campaign).all()
+
+@router.post("/", response_model=CampaignResponse)
+def create_campaign(campaign: CampaignCreate, db: Session = Depends(get_db), current_user = Depends(require_admin)):
+    new_campaign = Campaign(
+        name=campaign.name,
+        template=campaign.template,
+        status="draft",
+        created_by=current_user.id
+    )
+    db.add(new_campaign)
+    db.commit()
+    db.refresh(new_campaign)
+    return new_campaign
+
+@router.get("/{id}", response_model=CampaignResponse)
+def get_campaign(id: int, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+    campaign = db.query(Campaign).filter(Campaign.id == id).first()
+    if not campaign:
+        raise HTTPException(status_code=404, detail="Campaña no encontrada")
+    return campaign
+
+@router.delete("/{id}")
+def delete_campaign(id: int, db: Session = Depends(get_db), current_user = Depends(require_admin)):
+    campaign = db.query(Campaign).filter(Campaign.id == id).first()
+    if not campaign:
+        raise HTTPException(status_code=404, detail="Campaña no encontrada")
+    db.delete(campaign)
+    db.commit()
+    return {"message": "Campaña eliminada"}
